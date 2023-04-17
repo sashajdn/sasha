@@ -8,6 +8,8 @@ readme = "README.md"
 [tool.poetry.dependencies]
 python = "^3.11"
 langchain = "^0.0.141"
+mypy = "^1.2.0"
+ruff = "^0.0.261"
 
 
 [build-system]
