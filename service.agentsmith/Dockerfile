@@ -1,5 +1,6 @@
 ### --- Python --- ###
 FROM python:3.11-slim-buster as python-base
+
 ENV PYTHONUNBUFFERED=1 \
     PYTHONDONTWRITEBYTECODE=1 \
     PIP_NO_CACHE_DIR=off \
@@ -20,19 +21,20 @@ RUN apt-get update \
         curl \
         build-essential
 
-ENV POETRY_VERSION=1.2.0
-RUN curl -sSL https://raw.githubusercontent.com/sdispater/poetry/master/get-poetry.py | python
+ENV POETRY_VERSION=1.4.2
+
+RUN curl -sSL https://install.python-poetry.org | python3 -
 
 WORKDIR $PYSETUP_PATH
 COPY ./poetry.lock ./pyproject.toml .
-RUN poetry install --no-dev  # respects
+RUN poetry install --only main
 
 ### --- Service --- ###
 FROM python-base as service
 
 COPY --from=builder-base $VENV_PATH $VENV_PATH
 
-COPY . /app
+COPY ./src /app
 WORKDIR /app
 
-ENTRYPOINT ["poetry", "run", "python", "."]
+ENTRYPOINT ["python", "."]
