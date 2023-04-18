@@ -1,5 +1,5 @@
 [tool.poetry]
-name = "agentsmith"
+name = "service.agentsmith"
 version = "0.1.0"
 description = ""
 authors = ["sasha <alexperkins.dev@gmail.com>"]
