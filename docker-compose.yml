@@ -6,3 +6,5 @@ services:
       context: ./service.agentsmith/
       dockerfile: ./Dockerfile
     image: agentsmith.service.agentsmith
+    environment:
+      - AGENTSMITH_OPENAI_API_KEY=${AGENTSMITH_OPENAI_API_KEY}
