@@ -9,6 +9,7 @@ import (
 
 	"github.com/sashajdn/sasha/libraries/environment"
 	"github.com/sashajdn/sasha/libraries/mariana"
+	"github.com/sashajdn/sasha/service.github/client"
 	"github.com/sashajdn/sasha/service.github/handler"
 	githubproto "github.com/sashajdn/sasha/service.github/proto"
 )
@@ -28,6 +29,10 @@ func main() {
 	cfg, err := environment.LoadEnvironment()
 	if err != nil {
 		log.Fatalf("Failed to load environment: %v", err)
+	}
+
+	if err := client.Init(); err != nil {
+		log.Fatalf("Failed to init client: %v", err)
 	}
 
 	// Init Mariana Server
