@@ -1,0 +1,80 @@
+SHELL=/bin/bash -O extglob -c
+
+binary := $(shell pwd | rev | cut -d '/' -f 1 | rev | sed 's/-//g' )
+fq-binary := sasha.$(binary)
+fq-binary-arm := sasha.$(binary).arm
+
+docker-tag ?= $(fq-binary)
+
+define DOCKERFILE_CONTENTS
+### --- Python --- ###
+FROM python:3.11-slim-buster as python-base
+
+ENV PYTHONUNBUFFERED=1 \
+    PYTHONDONTWRITEBYTECODE=1 \
+    PIP_NO_CACHE_DIR=off \
+    PIP_DISABLE_PIP_VERSION_CHECK=on \
+    PIP_DEFAULT_TIMEOUT=100 \
+    POETRY_HOME="/opt/poetry" \
+    POETRY_VIRTUALENVS_IN_PROJECT=true \
+    POETRY_NO_INTERACTION=1 \
+    PYSETUP_PATH="/opt/pysetup" \
+    VENV_PATH="/opt/pysetup/.venv"
+
+ENV PATH="$$POETRY_HOME/bin:$$VENV_PATH/bin:$$PATH"
+
+### --- Builder --- ###
+FROM python-base as builder-base
+RUN apt-get update \
+    && apt-get install --no-install-recommends -y \
+        curl \
+        build-essential
+
+ENV POETRY_VERSION=1.4.2
+
+RUN curl -sSL https://install.python-poetry.org | python3 -
+
+WORKDIR $$PYSETUP_PATH
+COPY ./poetry.lock ./pyproject.toml .
+RUN poetry install --only main
+
+### --- Service --- ###
+FROM python-base as service
+
+COPY --from=builder-base $$VENV_PATH $$VENV_PATH
+
+COPY ./src /app
+WORKDIR /app
+
+ENTRYPOINT ["python", "."]
+endef
+
+export DOCKERFILE_CONTENTS
+
+define DOCKERFILEIGNORE_CONTENTS
+endef
+
+export DOCKERFILEIGNORE_CONTENTS
+
+.PHONY: .dockerignore
+.dockerignore: Makefile
+	echo "$$DOCKERFILEIGNORE_CONTENTS" > .dockerignore
+
+.PHONY: Dockerfile
+Dockerfile: Makefile .dockerignore
+	echo "$$DOCKERFILE_CONTENTS" > Dockerfile
+
+.PHONY: docker
+.DELETE_ON_ERROR: docker
+docker: Dockerfile .dockerignore
+	docker build -t $(fq-binary) .
+
+.PHONY: dockerarm
+.DELETE_ON_ERROR: dockerarm
+dockerarm: Dockerfile .dockerignore
+	docker buildx use default && \
+		docker buildx build --platform linux/arm64 . -o type=image --no-cache
+
+.PHONY: name
+name:
+	@echo $(fq-binary)
