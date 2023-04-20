@@ -1,3 +1,17 @@
 .PHONY: run
-run:
-	docker-compose -f docker-compose.yml up --build
+run: build
+	docker-compose -f docker-compose.yml --profile backend up --build
+
+.PHONY: runarm
+runarm: buildarm
+	docker-compose -f docker-compose.yml --profile backend up --build
+
+.PHONY: build
+build:
+	cd service.github && sudo make docker && cd .. && \
+	cd service.openai && sudo make docker && cd ..
+
+.PHONY: buildarm
+buildarm:
+	cd service.openai && sudo make dockerarm && cd .. && \
+	cd service.github && sudo make dockerarm && cd ..

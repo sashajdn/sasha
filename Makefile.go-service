@@ -1,0 +1,68 @@
+SHELL=/bin/bash -O extglob -c
+
+binary := $(shell pwd | rev | cut -d '/' -f 1 | rev | sed 's/-//g' )
+fq-binary := sasha.$(binary)
+fq-binary-arm := sasha.$(binary).arm
+
+docker-tag ?= $(fq-binary)
+
+define DOCKERFILE_CONTENTS
+### --- Service --- ###
+FROM alpine:latest
+MAINTAINER alexperkins.dev@gmail.com
+ADD $(fq-binary) /
+ADD ./config /$(binary)/config
+EXPOSE 8080
+RUN apk --no-cache add ca-certificates
+ENTRYPOINT ["/$(fq-binary)"]
+endef
+
+export DOCKERFILE_CONTENTS
+
+define DOCKERFILEIGNORE_CONTENTS
+endef
+
+export DOCKERFILEIGNORE_CONTENTS
+
+.PHONY: .dockerignore
+.dockerignore: Makefile
+	echo "$$DOCKERFILEIGNORE_CONTENTS" > .dockerignore
+
+.PHONY: Dockerfile
+Dockerfile: Makefile .dockerignore
+	echo "$$DOCKERFILE_CONTENTS" > Dockerfile
+
+.INTERMEDIATE: $(fq-binary)
+$(fq-binary): $(shell find . -type f -name "*.go")
+	go list -f '{{ join .Deps  "\n"}}' . | \
+		grep -vE "^github.com/sashajdn/sasha" | \
+		xargs go get -u
+	CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -i -installsuffix docker -o $(fq-binary)
+
+.INTERMEDIATE: $(fq-binary-arm)
+$(fq-binary-arm): $(shell find . -type f -name "*.go")
+	go list -f '{{ join .Deps  "\n"}}' . | \
+		grep -vE "^github.com/sashajdn/sasha" | \
+		xargs go get -u
+	CGO_ENABLED=0 GOOS=linux GOARCH=arm64 go build -i -installsuffix docker -o $(fq-binary)
+
+.PHONY: docker
+.DELETE_ON_ERROR: docker
+docker: Dockerfile .dockerignore $(fq-binary)
+	docker build -t $(fq-binary) .
+
+.PHONY: dockerarm
+.DELETE_ON_ERROR: dockerarm
+dockerarm: Dockerfile .dockerignore $(fq-binary-arm)
+	docker buildx use default && \
+		docker buildx build --platform linux/arm64 . -o type=image --no-cache
+
+.PHONY: deps
+deps:
+	@go list -f '{{ join .Deps  "\n"}}' . | \
+		grep -E "^github.com/sashajdn/sasha" | \
+		xargs go list -f '{{$$o:=.}}{{range .GoFiles}}{{$$o.Dir}}{{"."}}{{.}}{{"\n"}}{{end}}'
+
+.PHONY: name
+name:
+	@echo $(fq-binary)
