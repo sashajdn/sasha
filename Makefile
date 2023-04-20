@@ -9,9 +9,11 @@ runarm: buildarm
 .PHONY: build
 build:
 	cd service.github && sudo make docker && cd .. && \
-	cd service.openai && sudo make docker && cd ..
+	cd service.openai && sudo make docker && cd .. && \
+	cd service.agentsmith && sudo make docker & cd ..
 
 .PHONY: buildarm
 buildarm:
 	cd service.openai && sudo make dockerarm && cd .. && \
-	cd service.github && sudo make dockerarm && cd ..
+	cd service.github && sudo make dockerarm && cd .. && \
+	cd service.agentsmith && sudo make docker & cd ..
