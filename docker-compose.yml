@@ -7,11 +7,17 @@ services:
     image: sasha.service.openai
     profiles:
       - backend
+      - services
+    depends_on:
+      - infra.cassandra.0
+
   service.github:
     hostname: sasha-service-github
     image: sasha.service.github
     profiles:
       - backend
+      - services
+
   service.agentsmith:
     build:
       context: ./service.agentsmith/
@@ -19,3 +25,74 @@ services:
     image: agentsmith.service.agentsmith
     profiles:
       - backend
+      - services
+
+  ### --- Infrastructure --- ###
+  infra.cassandra.0:
+    build:
+      context: ./infrastructure/cassandra/
+      dockerfile: ./Dockerfile
+    hostname: sasha-infra-cassandra-0
+    image: sasha-infra-cassandra
+    ports:
+      - "9042:9042"
+    volumes:
+      - infra.cassandra.0:/var/lib/cassandra
+    environment:
+      - CASSANDRA_SEEDS=infra.cassandra.0
+      - CASSANDRA_CLUSTER_NAME=sasha-infra-cassandra
+      - CASSANDRA_DC=sasha-infra-cassandra-dc1
+      - CASSANDRA_RACK=sasha-infra-cassandra-dc1-r1
+      - CASSANDRA_ENDPOINT_SNITCH=GossipingPropertyFileSnitch
+    profiles:
+      - backend
+      - infra
+
+  infra.cassandra.1:
+    build:
+      context: ./infrastructure/cassandra/
+      dockerfile: ./Dockerfile
+    hostname: sasha-infra-cassandra-1
+    image: sasha-infra-cassandra
+    ports:
+      - "9043:9042"
+    depends_on:
+      - infra.cassandra.0
+    volumes:
+      - infra.cassandra.1:/var/lib/cassandra
+    environment:
+      - CASSANDRA_SEEDS=infra.cassandra.0
+      - CASSANDRA_CLUSTER_NAME=sasha-infra-cassandra
+      - CASSANDRA_DC=sasha-infra-cassandra-dc1
+      - CASSANDRA_RACK=sasha-infra-cassandra-dc1-r1
+      - CASSANDRA_ENDPOINT_SNITCH=GossipingPropertyFileSnitch
+    profiles:
+      - backend
+      - infra
+
+  infra.cassandra.2:
+    build:
+      context: ./infrastructure/cassandra/
+      dockerfile: ./Dockerfile
+    hostname: sasha-infra-cassandra-2
+    image: sasha-infra-cassandra
+    ports:
+      - "9044:9042"
+    depends_on:
+      - infra.cassandra.0
+    volumes:
+      - infra.cassandra.2:/var/lib/cassandra
+    environment:
+      - CASSANDRA_SEEDS=infra.cassandra.0
+      - CASSANDRA_CLUSTER_NAME=sasha-infra-cassandra
+      - CASSANDRA_DC=sasha-infra-cassandra-dc1
+      - CASSANDRA_RACK=sasha-infra-cassandra-dc1-r1
+      - CASSANDRA_ENDPOINT_SNITCH=GossipingPropertyFileSnitch
+    profiles:
+      - backend
+      - infra
+
+volumes:
+  infra.cassandra.0:
+  infra.cassandra.1:
+  infra.cassandra.2:
