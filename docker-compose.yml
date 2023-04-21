@@ -8,6 +8,8 @@ services:
     profiles:
       - backend
       - services
+    depends_on:
+      - infra.cassandra.0
 
   service.github:
     hostname: sasha-service-github

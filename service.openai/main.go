@@ -9,6 +9,7 @@ import (
 
 	"github.com/sashajdn/sasha/libraries/environment"
 	"github.com/sashajdn/sasha/libraries/mariana"
+	"github.com/sashajdn/sasha/service.openai/dao"
 	"github.com/sashajdn/sasha/service.openai/handler"
 	openaiproto "github.com/sashajdn/sasha/service.openai/proto"
 )
@@ -28,6 +29,11 @@ func main() {
 	cfg, err := environment.LoadEnvironment()
 	if err != nil {
 		log.Fatalf("Failed to load environment: %v", err)
+		logger.With(zap.Error(err)).Fatal("Failed to load environment")
+	}
+
+	if err := dao.Init(serviceName, cfg.Cassandra); err != nil {
+		logger.With(zap.Error(err)).Fatal("Failed to init dao")
 	}
 
 	// Init Mariana Server
