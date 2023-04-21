@@ -33,10 +33,11 @@ func WithProtocolVersion(protocolVersion int) Opt {
 	}
 }
 
-func NewConfigFromEnv(env environment.Cassandra) Config {
+func NewConfigFromEnv(env environment.Cassandra, logger *zap.SugaredLogger) Config {
 	return Config{
 		Hosts:    env.SeedNodeIPs,
 		Keyspace: env.Keyspace,
+		Logger:   logger,
 	}
 }
 
