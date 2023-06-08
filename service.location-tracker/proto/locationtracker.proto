@@ -4,7 +4,7 @@ import "google/protobuf/timestamp.proto";
 
 option go_package = "./;locationtrackerproto";
 
-service openai{
+service locationtracker {
     rpc Ping (PingRequest) returns (PingResponse) {}
     rpc UpdateLocation (UpdateLocationRequest) returns (UpdateLocationResponse) {}
 }

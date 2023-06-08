@@ -8,6 +8,9 @@ import (
 	"github.com/sashajdn/sasha/libraries/environment"
 	"github.com/sashajdn/sasha/libraries/mariana"
 	"go.uber.org/zap"
+
+	"github.com/sashajdn/sasha/service.location-tracker/handler"
+	locationtrackerproto "github.com/sashajdn/sasha/service.location-tracker/proto"
 )
 
 const serviceName = "serivce.location-tracker"
@@ -32,7 +35,7 @@ func main() {
 	)
 
 	srv := mariana.InitWithConfig(serviceName, cfg, slogger)
-	// TODO: register proto.
+	locationtrackerproto.RegisterLocationtrackerServer(srv.Grpc(), &handler.LocationTrackerService{})
 
 	srv.Run(ctx)
 }

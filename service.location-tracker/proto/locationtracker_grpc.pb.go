@@ -18,122 +18,122 @@ import (
 // Requires gRPC-Go v1.32.0 or later.
 const _ = grpc.SupportPackageIsVersion7
 
-// OpenaiClient is the client API for Openai service.
+// LocationtrackerClient is the client API for Locationtracker service.
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
-type OpenaiClient interface {
+type LocationtrackerClient interface {
 	Ping(ctx context.Context, in *PingRequest, opts ...grpc.CallOption) (*PingResponse, error)
 	UpdateLocation(ctx context.Context, in *UpdateLocationRequest, opts ...grpc.CallOption) (*UpdateLocationResponse, error)
 }
 
-type openaiClient struct {
+type locationtrackerClient struct {
 	cc grpc.ClientConnInterface
 }
 
-func NewOpenaiClient(cc grpc.ClientConnInterface) OpenaiClient {
-	return &openaiClient{cc}
+func NewLocationtrackerClient(cc grpc.ClientConnInterface) LocationtrackerClient {
+	return &locationtrackerClient{cc}
 }
 
-func (c *openaiClient) Ping(ctx context.Context, in *PingRequest, opts ...grpc.CallOption) (*PingResponse, error) {
+func (c *locationtrackerClient) Ping(ctx context.Context, in *PingRequest, opts ...grpc.CallOption) (*PingResponse, error) {
 	out := new(PingResponse)
-	err := c.cc.Invoke(ctx, "/openai/Ping", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/locationtracker/Ping", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *openaiClient) UpdateLocation(ctx context.Context, in *UpdateLocationRequest, opts ...grpc.CallOption) (*UpdateLocationResponse, error) {
+func (c *locationtrackerClient) UpdateLocation(ctx context.Context, in *UpdateLocationRequest, opts ...grpc.CallOption) (*UpdateLocationResponse, error) {
 	out := new(UpdateLocationResponse)
-	err := c.cc.Invoke(ctx, "/openai/UpdateLocation", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/locationtracker/UpdateLocation", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-// OpenaiServer is the server API for Openai service.
-// All implementations must embed UnimplementedOpenaiServer
+// LocationtrackerServer is the server API for Locationtracker service.
+// All implementations must embed UnimplementedLocationtrackerServer
 // for forward compatibility
-type OpenaiServer interface {
+type LocationtrackerServer interface {
 	Ping(context.Context, *PingRequest) (*PingResponse, error)
 	UpdateLocation(context.Context, *UpdateLocationRequest) (*UpdateLocationResponse, error)
-	mustEmbedUnimplementedOpenaiServer()
+	mustEmbedUnimplementedLocationtrackerServer()
 }
 
-// UnimplementedOpenaiServer must be embedded to have forward compatible implementations.
-type UnimplementedOpenaiServer struct {
+// UnimplementedLocationtrackerServer must be embedded to have forward compatible implementations.
+type UnimplementedLocationtrackerServer struct {
 }
 
-func (UnimplementedOpenaiServer) Ping(context.Context, *PingRequest) (*PingResponse, error) {
+func (UnimplementedLocationtrackerServer) Ping(context.Context, *PingRequest) (*PingResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Ping not implemented")
 }
-func (UnimplementedOpenaiServer) UpdateLocation(context.Context, *UpdateLocationRequest) (*UpdateLocationResponse, error) {
+func (UnimplementedLocationtrackerServer) UpdateLocation(context.Context, *UpdateLocationRequest) (*UpdateLocationResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method UpdateLocation not implemented")
 }
-func (UnimplementedOpenaiServer) mustEmbedUnimplementedOpenaiServer() {}
+func (UnimplementedLocationtrackerServer) mustEmbedUnimplementedLocationtrackerServer() {}
 
-// UnsafeOpenaiServer may be embedded to opt out of forward compatibility for this service.
-// Use of this interface is not recommended, as added methods to OpenaiServer will
+// UnsafeLocationtrackerServer may be embedded to opt out of forward compatibility for this service.
+// Use of this interface is not recommended, as added methods to LocationtrackerServer will
 // result in compilation errors.
-type UnsafeOpenaiServer interface {
-	mustEmbedUnimplementedOpenaiServer()
+type UnsafeLocationtrackerServer interface {
+	mustEmbedUnimplementedLocationtrackerServer()
 }
 
-func RegisterOpenaiServer(s grpc.ServiceRegistrar, srv OpenaiServer) {
-	s.RegisterService(&Openai_ServiceDesc, srv)
+func RegisterLocationtrackerServer(s grpc.ServiceRegistrar, srv LocationtrackerServer) {
+	s.RegisterService(&Locationtracker_ServiceDesc, srv)
 }
 
-func _Openai_Ping_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _Locationtracker_Ping_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(PingRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(OpenaiServer).Ping(ctx, in)
+		return srv.(LocationtrackerServer).Ping(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/openai/Ping",
+		FullMethod: "/locationtracker/Ping",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(OpenaiServer).Ping(ctx, req.(*PingRequest))
+		return srv.(LocationtrackerServer).Ping(ctx, req.(*PingRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _Openai_UpdateLocation_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _Locationtracker_UpdateLocation_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(UpdateLocationRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(OpenaiServer).UpdateLocation(ctx, in)
+		return srv.(LocationtrackerServer).UpdateLocation(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/openai/UpdateLocation",
+		FullMethod: "/locationtracker/UpdateLocation",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(OpenaiServer).UpdateLocation(ctx, req.(*UpdateLocationRequest))
+		return srv.(LocationtrackerServer).UpdateLocation(ctx, req.(*UpdateLocationRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-// Openai_ServiceDesc is the grpc.ServiceDesc for Openai service.
+// Locationtracker_ServiceDesc is the grpc.ServiceDesc for Locationtracker service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
-var Openai_ServiceDesc = grpc.ServiceDesc{
-	ServiceName: "openai",
-	HandlerType: (*OpenaiServer)(nil),
+var Locationtracker_ServiceDesc = grpc.ServiceDesc{
+	ServiceName: "locationtracker",
+	HandlerType: (*LocationtrackerServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
 			MethodName: "Ping",
-			Handler:    _Openai_Ping_Handler,
+			Handler:    _Locationtracker_Ping_Handler,
 		},
 		{
 			MethodName: "UpdateLocation",
-			Handler:    _Openai_UpdateLocation_Handler,
+			Handler:    _Locationtracker_UpdateLocation_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
