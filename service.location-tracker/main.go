@@ -5,17 +5,15 @@ import (
 	"log"
 	"os/signal"
 
-	"go.uber.org/zap"
-
 	"github.com/sashajdn/sasha/libraries/environment"
 	"github.com/sashajdn/sasha/libraries/mariana"
+	"go.uber.org/zap"
 
-	"github.com/sashajdn/sasha/service.openai/dao"
-	"github.com/sashajdn/sasha/service.openai/handler"
-	openaiproto "github.com/sashajdn/sasha/service.openai/proto"
+	"github.com/sashajdn/sasha/service.location-tracker/handler"
+	locationtrackerproto "github.com/sashajdn/sasha/service.location-tracker/proto"
 )
 
-const serviceName = "service.openai"
+const serviceName = "serivce.location-tracker"
 
 func main() {
 	ctx, cancel := signal.NotifyContext(context.Background())
@@ -36,13 +34,8 @@ func main() {
 		zap.String("namespace", cfg.Metadata.Namespace),
 	)
 
-	if err := dao.Init(serviceName, cfg.Cassandra, slogger); err != nil {
-		logger.With(zap.Error(err)).Fatal("Failed to init dao")
-	}
-
-	// Init Mariana Server.
 	srv := mariana.InitWithConfig(serviceName, cfg, slogger)
-	openaiproto.RegisterOpenaiServer(srv.Grpc(), &handler.OpenAIService{})
+	locationtrackerproto.RegisterLocationtrackerServer(srv.Grpc(), &handler.LocationTrackerService{})
 
 	srv.Run(ctx)
 }
