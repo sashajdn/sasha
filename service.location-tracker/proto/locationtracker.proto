@@ -1,0 +1,31 @@
+syntax = "proto3";
+
+import "google/protobuf/timestamp.proto";
+
+option go_package = "./;locationtrackerproto";
+
+service openai{
+    rpc Ping (PingRequest) returns (PingResponse) {}
+    rpc UpdateLocation (UpdateLocationRequest) returns (UpdateLocationResponse) {}
+}
+
+message PingRequest {}
+message PingResponse {}
+
+message UpdateLocationRequest{
+    string user_id = 1;
+    string actor_id = 2;
+    Location location = 3;
+    google.protobuf.Timestamp timestamp = 4;
+}
+
+message UpdateLocationResponse{}
+
+message Location {
+    float latitude = 1;
+    float longitude = 2;
+    string country_code = 3;
+    string human_readable_country_id = 4;
+    string human_readable_city_id = 5;
+    string human_readable_location_id = 6;
+}
