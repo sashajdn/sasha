@@ -19,10 +19,25 @@ services:
       - services
 
   service.agentsmith:
+<<<<<<< Updated upstream
     build:
       context: ./service.agentsmith/
       dockerfile: ./Dockerfile
     image: agentsmith.service.agentsmith
+=======
+    hostname: sasha-service-agentsmith
+    build:
+      context: ./service.agentsmith/
+      dockerfile: ./Dockerfile
+    image: sasha.service.agentsmith
+    profiles:
+      - backend
+      - services
+
+  service.locationtracker:
+    hostname: sasha-service-locationtracker
+    image: sasha.service.locationtracker
+>>>>>>> Stashed changes
     profiles:
       - backend
       - services
