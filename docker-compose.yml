@@ -19,7 +19,7 @@ services:
       - services
 
   service.agentsmith:
-    hostname: sasha-s-agentsmith
+    hostname: sasha-service-agentsmith
     build:
       context: ./service.agentsmith/
       dockerfile: ./Dockerfile
@@ -29,7 +29,7 @@ services:
       - services
 
   service.locationtracker:
-    hostname: sasha-s-locationtracker
+    hostname: sasha-service-locationtracker
     image: sasha.service.locationtracker
     profiles:
       - backend
