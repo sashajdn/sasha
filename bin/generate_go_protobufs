@@ -3,7 +3,7 @@
 # TODO: Usage & prevention from calling from anywhere other than project root.
 
 SERVICE=$1
-SERVICE_NAME=$(echo "$SERVICE" | sed "s/service\.//g")
+SERVICE_NAME=$(echo "$SERVICE" | sed "s/service\.//g" | sed "s/-//g")
 
 echo "🛠   Generating protobuf definitions for: $SERVICE..."
 
